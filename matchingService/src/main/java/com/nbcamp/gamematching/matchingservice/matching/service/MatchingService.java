@@ -1,4 +1,4 @@
-package com.nbcamp.gamematching.matchingservice.matching.Service;
+package com.nbcamp.gamematching.matchingservice.matching.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nbcamp.gamematching.matchingservice.matching.dto.NicknameDto;

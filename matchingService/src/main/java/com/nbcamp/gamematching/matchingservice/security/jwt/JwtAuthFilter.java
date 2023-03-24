@@ -1,4 +1,4 @@
-package com.nbcamp.gamematching.matchingservice.jwt;
+package com.nbcamp.gamematching.matchingservice.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    private final com.nbcamp.gamematching.matchingservice.jwt.JwtUtil jwtUtil;
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain)

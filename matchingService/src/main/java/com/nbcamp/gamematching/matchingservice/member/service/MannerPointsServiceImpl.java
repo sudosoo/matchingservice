@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbcamp.gamematching.matchingservice.exception.NotFoundException.NotFoundMemberException;
-import com.nbcamp.gamematching.matchingservice.matching.Service.MatchingService;
+import com.nbcamp.gamematching.matchingservice.matching.service.MatchingService;
 import com.nbcamp.gamematching.matchingservice.matching.entity.MatchingLog;
 import com.nbcamp.gamematching.matchingservice.matching.entity.ResultMatching;
 import com.nbcamp.gamematching.matchingservice.matching.repository.MatchingLogRepository;

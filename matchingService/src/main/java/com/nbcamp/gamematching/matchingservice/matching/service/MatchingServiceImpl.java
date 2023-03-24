@@ -1,9 +1,9 @@
-package com.nbcamp.gamematching.matchingservice.matching.Service;
+package com.nbcamp.gamematching.matchingservice.matching.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nbcamp.gamematching.matchingservice.config.StompSessionInterceptor;
 import com.nbcamp.gamematching.matchingservice.discord.service.DiscordService;
+import com.nbcamp.gamematching.matchingservice.exception.NotFoundException;
 import com.nbcamp.gamematching.matchingservice.matching.dto.QueryDto.MatchingResultQueryDto;
 import com.nbcamp.gamematching.matchingservice.exception.NotFoundException.NotFoundMatchingException;
 import com.nbcamp.gamematching.matchingservice.matching.dto.NicknameDto;
@@ -18,7 +18,6 @@ import com.nbcamp.gamematching.matchingservice.member.service.MemberService;
 import com.nbcamp.gamematching.matchingservice.redis.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,6 @@ public class MatchingServiceImpl implements MatchingService {
     public ResponseUrlInfo matchingJoin(RequestMatching request, HttpServletRequest servletRequest)
             throws JsonProcessingException {
         Long matchingQuota = Long.valueOf(request.getMemberNumbers());
-
         //방 현재 인원 체크
         var matchingRoomCapacity = redisService.waitingUserCountAndRedisConnectByRedis(request.getKey());
         log.info(" 현재 방 입장 인원 =={ }==",matchingRoomCapacity.toString());
@@ -69,7 +67,7 @@ public class MatchingServiceImpl implements MatchingService {
         if (resultUrl.isPresent()) {
             url = resultUrl.get();
         } else {
-            throw new IllegalArgumentException("url을 찾을 수 없습니다.");
+            throw new NotFoundException.NotFoundMatchingException();
         }
         var topicName = resultMemberList.get(0).getMemberEmail();
         var resultMatching = ResultMatching.builder()
