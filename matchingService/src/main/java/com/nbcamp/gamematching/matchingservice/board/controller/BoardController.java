@@ -25,7 +25,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final AnonymousBoardService anonymousBoardService;
-
     private final FileUploadService fileUploadService;
 
 
