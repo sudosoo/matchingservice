@@ -39,9 +39,9 @@
 # .idea/compiler.xml
 # .idea/jarRepositories.xml
 # .idea/modules.xml
-# .idea/*.iml
+ .idea/*.iml
 # .idea/modules
-# *.iml
+*.iml
 # *.ipr
 
 # CMake
@@ -229,3 +229,10 @@ gradle-app.setting
 application.yml
 *.properties
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,gradle,windows,macos
+
+/caches/
+/jansi
+/native
+/wrapper
+/daemon
+*.idea
