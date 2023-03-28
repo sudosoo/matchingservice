@@ -1,5 +1,6 @@
 package com.nbcamp.gamematching.matchingservice.board.entity;
 
+import com.nbcamp.gamematching.matchingservice.board.dto.BoardRequest;
 import com.nbcamp.gamematching.matchingservice.board.dto.UpdateBoardRequest;
 import com.nbcamp.gamematching.matchingservice.comment.entity.Comment;
 import com.nbcamp.gamematching.matchingservice.common.entity.BaseEntity;
@@ -33,20 +34,20 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
-    public Board(String boardImage, String content, Member member) {
+    public Board(String boardImage,BoardRequest boardRequest) {
         this.nickname = member.getProfile().getNickname();
         this.boardImage = boardImage;
-        this.content = content;
-        this.member = member;
+        this.content = boardRequest.getContent();
+        this.member = boardRequest.getMember();
     }
-    public void updateBoard(UpdateBoardRequest boardRequestDto, String boardImageUrl, Member member) {
+    public void updateBoard(BoardRequest boardRequest, String boardImageUrl) {
         this.boardImage = boardImageUrl;
-        this.content = boardRequestDto.getContent();
-        this.member = member;
+        this.content = boardRequest.getContent();
+        this.member = boardRequest.getMember();
     }
     public void checkUser(Board board, Member member) {
         if (!board.getMember().getEmail().equals(member.getEmail())) {
-            throw new NotFoundException();
+            throw new NotFoundException.NotFoundMemberException();
         }
     }
 }

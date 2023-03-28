@@ -1,5 +1,6 @@
 package com.nbcamp.gamematching.matchingservice.board.entity;
 
+import com.nbcamp.gamematching.matchingservice.board.dto.BoardRequest;
 import com.nbcamp.gamematching.matchingservice.board.dto.UpdateBoardRequest;
 import com.nbcamp.gamematching.matchingservice.comment.entity.AnonymousComment;
 import com.nbcamp.gamematching.matchingservice.common.entity.BaseEntity;
@@ -41,10 +42,10 @@ public class AnonymousBoard extends BaseEntity {
     }
 
 
-    public void updateAnonymousBoard(UpdateBoardRequest boardRequestDto,String boardImage, Member member) {
-        this.boardImage = boardImage;
-        this.content = boardRequestDto.getContent();
-        this.member = member;
+    public void updateAnonymousBoard(BoardRequest boardRequest,String image) {
+        this.boardImage = image;
+        this.content = boardRequest.getContent();
+        this.member = boardRequest.getMember();
     }
 
     public void checkUser(AnonymousBoard anonymousBoard, Member member) {
