@@ -1,7 +1,6 @@
 package com.nbcamp.gamematching.matchingservice.board.entity;
 
 import com.nbcamp.gamematching.matchingservice.board.dto.BoardRequest;
-import com.nbcamp.gamematching.matchingservice.board.dto.UpdateBoardRequest;
 import com.nbcamp.gamematching.matchingservice.comment.entity.AnonymousComment;
 import com.nbcamp.gamematching.matchingservice.common.entity.BaseEntity;
 import com.nbcamp.gamematching.matchingservice.exception.NotFoundException;

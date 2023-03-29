@@ -86,7 +86,6 @@ public class BoardController {
         return new ResponseEntity<>("게시글 삭제완료", HttpStatus.OK);
     }
 
-
     //게시글 단건 조회
     @GetMapping("/normal/{boardId}")
     public BoardResponse getBoard(@PathVariable Long boardId) {
@@ -100,12 +99,5 @@ public class BoardController {
     }
 
 
-//    @GetMapping(value = "/search/{searchName}")
-//    public List<BoardResponse> getBoardList1(@PathVariable String searchName) {
-//        return boardService.getBoardList1(searchName);
-////        model.addAttribute("boardResponseList",boardResponseList);
-////        model.addAttribute("board",board);
-////        return "board/main";
-//    }
 
 }

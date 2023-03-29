@@ -92,9 +92,7 @@ public class CommentServiceImpl implements CommentService {
             CommentResponse commentResponse = new CommentResponse(comment);
             commentResponseList.add(commentResponse);
         }
-
         return commentResponseList;
-
     }
 
     public List<AnonymousCommentResponse> showAnonymousComment(Long boardId) {
@@ -105,9 +103,7 @@ public class CommentServiceImpl implements CommentService {
             AnonymousCommentResponse commentResponse = new AnonymousCommentResponse(comment);
             commentResponseList.add(commentResponse);
         }
-
         return commentResponseList;
-
     }
 
     public CommentResponse getComment(Long commentId) {

@@ -34,11 +34,14 @@ public class MatchingController {
         template.convertAndSend("/matchingsub/" + responseUrlInfo.getTopicName()
                 , responseUrlInfo);
     }
+
     @PostMapping("/join")
     @ResponseBody
-    public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody RequestMatching requestMatching,
-                                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       HttpServletRequest servletRequest) throws JsonProcessingException {
+    public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody final RequestMatching requestMatching,
+                                                       @AuthenticationPrincipal final UserDetailsImpl userDetails,
+                                                       final HttpServletRequest servletRequest)
+            throws JsonProcessingException {
+
         var member = userDetails.getMember();
         var matchingMember = new RequestMatching(requestMatching, member.getEmail());
         log.info("Join Matching Useremail{} UserDiscordId{}", member.getEmail(), requestMatching.getDiscordId());
@@ -49,13 +52,14 @@ public class MatchingController {
     @GetMapping("/findmember")
     @ResponseBody
     @Transactional(readOnly = true)
-    public ResponseEntity<Optional<List<MatchingResultQueryDto>>> findByResultMatchingAndMember(@RequestParam Long id) {
+    public ResponseEntity<List<MatchingResultQueryDto>> findByResultMatchingAndMember(@RequestParam final Long id) {
         return ResponseEntity.ok(matchingService.findByMatchingResultMemberNicknameByMemberId(id));
     }
 
     @GetMapping("/{matchingId}/members")
-    public List<NicknameDto> getMatchingMembers(@PathVariable Long matchingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
+    public List<NicknameDto> getMatchingMembers(@PathVariable final Long matchingId,
+                                                @AuthenticationPrincipal final UserDetailsImpl userDetails) {
+        var member = userDetails.getMember();
         return matchingService.findMatchingMembers(matchingId, member.getId());
     }
 

@@ -9,19 +9,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingLog {
-
-
-    //1번 매칭로그를 들고있는게
-    //멤버 1 번 2번
-    //
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
