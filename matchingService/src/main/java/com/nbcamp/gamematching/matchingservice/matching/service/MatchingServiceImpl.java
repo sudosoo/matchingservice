@@ -55,6 +55,7 @@ public class MatchingServiceImpl implements MatchingService {
         redisService.machedEnterByRedis(request.getKey(), request);
         var resultMemberList =
                 redisService.getMatchingMemberByRedis(request.getKey(), matchingQuota, RequestMatching.class);
+        var topicName = resultMemberList.get(0).getMemberEmail();
 
         List<Member> members = resultMemberList.stream()
                 .map(o -> memberService.responseMemberByMemberEmail(o.getMemberEmail())).toList();
@@ -62,7 +63,6 @@ public class MatchingServiceImpl implements MatchingService {
         String resultUrl = discordService.createChannel(resultMemberList.get(0).getGameMode(),
                 Integer.parseInt(resultMemberList.get(0).getMemberNumber())).orElseThrow(() -> new IllegalArgumentException("url을 찾을 수 없습니다."));
 
-        var topicName = resultMemberList.get(0).getMemberEmail();
         var resultMatching = ResultMatching.builder()
                 .gameInfo(resultMemberList.get(0).getKey())
                 .playMode(resultMemberList.get(0).getGameMode())
@@ -70,15 +70,17 @@ public class MatchingServiceImpl implements MatchingService {
                 .build();
         resultMatchingRepository.save(resultMatching);
 
-        for (int i = 0; i < resultMemberList.size(); i++) {
-            var resultMember = members.get(i);
-            MatchingLog matchingLog = new MatchingLog(resultMatching, resultMember);
-            matchingLogRepository.saveAndFlush(matchingLog);
-            matchingLog.addMatchingLogToMember(resultMember);
-        }
+        members.stream()
+                .map(resultMember -> {
+                    MatchingLog matchingLog = new MatchingLog(resultMatching, resultMember);
+                    matchingLog.addMatchingLogToMember(resultMember);
+                    matchingLogRepository.save(matchingLog);
+                    return matchingLog;
+                });
 
-        var currentmatchingId= resultMatchingRepository.findFirstByDiscordUrl(resultUrl)
+        var currentmatchingId = resultMatchingRepository.findFirstByDiscordUrl(resultUrl)
                 .orElseThrow(NotFoundMatchingException::new);
+
         return ResponseUrlInfo.builder()
                 .matchingId(currentmatchingId.getId())
                 .member(request)
