@@ -25,7 +25,7 @@ public class Member {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     public String password;

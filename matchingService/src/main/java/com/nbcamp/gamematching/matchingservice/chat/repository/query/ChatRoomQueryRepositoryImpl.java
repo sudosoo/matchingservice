@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import static com.nbcamp.gamematching.matchingservice.chat.entity.QChatRoom.chatRoom;
 
+
 @RequiredArgsConstructor
 public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
 

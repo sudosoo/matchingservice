@@ -1,12 +1,13 @@
 package com.nbcamp.gamematching.matchingservice.matching.dto;
 
 import com.nbcamp.gamematching.matchingservice.matching.entity.ResultMatching;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResponseUrlInfo {
     private Long matchingId;
     private RequestMatching member;
@@ -28,6 +29,6 @@ public class ResponseUrlInfo {
         this.matchingId = matchingId;
         this.member = member;
         this.topicName = topicName;
-        this.url=url;
+        this.url = url;
     }
 }

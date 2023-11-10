@@ -1,12 +1,11 @@
 package com.nbcamp.gamematching.matchingservice.matching.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nbcamp.gamematching.matchingservice.matching.Service.MatchingService;
 import com.nbcamp.gamematching.matchingservice.matching.dto.NicknameDto;
 import com.nbcamp.gamematching.matchingservice.matching.dto.QueryDto.MatchingResultQueryDto;
 import com.nbcamp.gamematching.matchingservice.matching.dto.RequestMatching;
 import com.nbcamp.gamematching.matchingservice.matching.dto.ResponseUrlInfo;
-import com.nbcamp.gamematching.matchingservice.member.entity.Member;
+import com.nbcamp.gamematching.matchingservice.matching.service.MatchingService;
 import com.nbcamp.gamematching.matchingservice.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/matching")
@@ -36,11 +34,11 @@ public class MatchingController {
 
     @PostMapping("/join")
     @ResponseBody
-    public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody RequestMatching requestMatching,
-                                                       @AuthenticationPrincipal UserDetailsImpl userDetails)
+    public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody final RequestMatching requestMatching,
+                                                       @AuthenticationPrincipal final UserDetailsImpl userDetails)
             throws JsonProcessingException {
         var member = userDetails.getMember();
-        var matchingMember = new RequestMatching(requestMatching, member.getEmail());
+        var matchingMember = new RequestMatching(requestMatching,member.getEmail());
         log.info("Join Matching Useremail{} UserDiscordId{}", member.getEmail(), requestMatching.getDiscordId());
         var urlInfo = matchingService.matchingJoin(matchingMember);
         return ResponseEntity.ok(urlInfo);
@@ -49,13 +47,16 @@ public class MatchingController {
     @GetMapping("/findmember")
     @ResponseBody
     @Transactional(readOnly = true)
-    public ResponseEntity<Optional<List<MatchingResultQueryDto>>> findByResultMatchingAndMember(@RequestParam Long id) {
-        return ResponseEntity.ok(matchingService.findByMatchingResultMemberNicknameByMemberId(id));
+    public ResponseEntity<List<MatchingResultQueryDto>> findByResultMatchingAndMember(@AuthenticationPrincipal final UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(matchingService.findByMatchingResultMemberNicknameByMemberId(userDetails.getMember().getId()));
     }
 
     @GetMapping("/{matchingId}/members")
-    public List<NicknameDto> getMatchingMembers(@PathVariable Long matchingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
+    public List<NicknameDto> getMatchingMembers(@PathVariable final Long matchingId,
+                                                @AuthenticationPrincipal final UserDetailsImpl userDetails) {
+        var member = userDetails.getMember();
         return matchingService.findMatchingMembers(matchingId, member.getId());
     }
+
+
 }
