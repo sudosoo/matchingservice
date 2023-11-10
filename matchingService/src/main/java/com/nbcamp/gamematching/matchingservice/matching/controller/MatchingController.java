@@ -8,7 +8,6 @@ import com.nbcamp.gamematching.matchingservice.matching.dto.RequestMatching;
 import com.nbcamp.gamematching.matchingservice.matching.dto.ResponseUrlInfo;
 import com.nbcamp.gamematching.matchingservice.member.entity.Member;
 import com.nbcamp.gamematching.matchingservice.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,15 +33,16 @@ public class MatchingController {
         template.convertAndSend("/matchingsub/" + responseUrlInfo.getTopicName()
                 , responseUrlInfo);
     }
+
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody RequestMatching requestMatching,
-                                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       HttpServletRequest servletRequest) throws JsonProcessingException {
+                                                       @AuthenticationPrincipal UserDetailsImpl userDetails)
+            throws JsonProcessingException {
         var member = userDetails.getMember();
         var matchingMember = new RequestMatching(requestMatching, member.getEmail());
         log.info("Join Matching Useremail{} UserDiscordId{}", member.getEmail(), requestMatching.getDiscordId());
-        var urlInfo = matchingService.matchingJoin(matchingMember, servletRequest);
+        var urlInfo = matchingService.matchingJoin(matchingMember);
         return ResponseEntity.ok(urlInfo);
     }
 
@@ -58,6 +58,4 @@ public class MatchingController {
         Member member = userDetails.getMember();
         return matchingService.findMatchingMembers(matchingId, member.getId());
     }
-
-
 }

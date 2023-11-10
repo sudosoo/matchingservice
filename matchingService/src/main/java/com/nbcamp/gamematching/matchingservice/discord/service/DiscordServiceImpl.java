@@ -1,14 +1,11 @@
 package com.nbcamp.gamematching.matchingservice.discord.service;
 
 import com.nbcamp.gamematching.matchingservice.config.DiscordJdaConfig;
-import com.nbcamp.gamematching.matchingservice.discord.dto.DiscordRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
