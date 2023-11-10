@@ -50,7 +50,7 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
                 .from(board)
                 .leftJoin(board.member).fetchJoin()
                 .where(
-                        board.member.Id.eq(memberId)
+                        board.member.id.eq(memberId)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -61,7 +61,7 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
                 .select(board.count())
                 .from(board)
                 .where(
-                        board.member.Id.eq(memberId)
+                        board.member.id.eq(memberId)
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);

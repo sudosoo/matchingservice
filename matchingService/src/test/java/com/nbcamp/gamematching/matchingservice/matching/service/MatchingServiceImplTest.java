@@ -1,93 +1,135 @@
 package com.nbcamp.gamematching.matchingservice.matching.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nbcamp.gamematching.matchingservice.matching.dto.RequestMatching;
 import com.nbcamp.gamematching.matchingservice.matching.entity.MatchingLog;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.nbcamp.gamematching.matchingservice.matching.entity.ResultMatching;
+import com.nbcamp.gamematching.matchingservice.member.domain.GameType;
+import com.nbcamp.gamematching.matchingservice.member.domain.MemberRoleEnum;
+import com.nbcamp.gamematching.matchingservice.member.domain.Tier;
+import com.nbcamp.gamematching.matchingservice.member.entity.Member;
+import com.nbcamp.gamematching.matchingservice.member.entity.Profile;
+import com.nbcamp.gamematching.matchingservice.member.service.MemberServiceImpl;
+import com.nbcamp.gamematching.matchingservice.redis.RedisService;
+import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
+import redis.embedded.RedisServer;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
-class MatchingServiceImplTest {
+@DirtiesContext
+@Transactional
+public class MatchingServiceImplTest {
+    @Mock
+    private MemberServiceImpl memberService;
+    @Mock
+    private MatchingServiceImpl matchingService;
+    private RequestMatching request1;
+    private RequestMatching request2;
 
+    private Member member1;
+    private Member member2;
+    private ResultMatching resultMatching;
     @Autowired
-    private MatchingService matchingService;
+    private RedisService redisService;
+    private static RedisServer redisServer;
 
-    List<RequestMatching> requestMatchingList = new ArrayList<>();
-    List<DeferredResult<MatchingLog>> deferredResultList = new ArrayList<>();
+    @BeforeAll
+    public static void start() {
+        redisServer = new RedisServer(6378);
+        redisServer.start();
+    }
+    @AfterAll
+    public static void tearDown() {
+        redisServer.stop();
+    }
 
-//    @BeforeEach
-//    public void beforeEach() {
-//
-//        for (long i = 1; i < 6; i++) {
-//            RequestMatching requestMatching = RequestMatching.builder()
-//                    .gameMode("ㅈㄱ")
-//                    .gameName("LOL")
-//                    .memberNumbers("5")
-//                    .memberId(i)
-//                    .discordId("#2357" + i)
-//                    .build();
-//            requestMatchingList.add(requestMatching);
-//            DeferredResult<MatchingLog> deferredResult = new DeferredResult<>(null);
-//            deferredResultList.add(deferredResult);
-//        }
+    @BeforeEach
+    void setUp() throws JsonProcessingException {
 
-//    }
-//
-//    @Test
-//    @DisplayName("LOL 5인큐에서 5인 매칭 신청했을 때")
-//    public void createMatchingRoomTest() {
-//        // given
-//
-//        // when
-//        for (int i = 0; i < 5; i++) {
-//            matchingService.joinMatchingRoom(requestMatchingList.get(i), deferredResultList.get(i));
-//        }
-//        // then
-//        Map<String, Map<RequestMatching, DeferredResult<MatchingLog>>> waitingQueue = matchingService.getWaitingQueue();
-//        for (String s : waitingQueue.keySet()) {
-//            System.out.println("waitingQueue.get(s) = " + waitingQueue.get(s).values().size());
-//        }
-//        assertThat(matchingService.getWaitingQueue().get("LOL5").values().size())
-//                .isEqualTo(0);
-//    }
-//
-//    @Test
-//    @DisplayName("LOL 5인큐에서 3인만 매칭 신청했을 때")
-//    public void notCreateMatchingRoomTest() {
-//        // given
-//
-//        // when
-//        for (int i = 0; i < 3; i++) {
-//            matchingService.joinMatchingRoom(requestMatchingList.get(i), deferredResultList.get(i));
-//        }
-//        // then
-//        Map<String, Map<RequestMatching, DeferredResult<MatchingLog>>> waitingQueue = matchingService.getWaitingQueue();
-//        for (String s : waitingQueue.keySet()) {
-//            System.out.println("waitingQueue.get(s) = " + waitingQueue.get(s).values().size());
-//        }
-//        assertThat(matchingService.getWaitingQueue().get("LOL5").values().size())
-//                .isEqualTo(3);
-//    }
-//
-//    @Test
-//    @DisplayName("LOL 5인큐 신청")
-//    public void joinMatchingRoomTest() throws Exception {
-//        // given
-//        RequestMatching requestMatching = requestMatchingList.get(0);
-//        DeferredResult<MatchingLog> responseMatchingDeferredResult = deferredResultList.get(0);
-//
-//        // when
-//        matchingService.joinMatchingRoom(requestMatching, responseMatchingDeferredResult);
-//
-//        // then
-//        assertThat(matchingService.getWaitingQueue().get("LOL5").values().size()).isEqualTo(1);
-//
-//    }
+
+
+        request1 = RequestMatching.builder()
+                .memberEmail("sparta@aa.aa")
+                .discordId("리릭")
+                .discordNum("1663")
+                .gameMode("ㅈㄱ")
+                .gameName("LOL")
+                .memberNumbers("2")
+                .build();
+        redisService.machedEnterByRedis(request1.getKey(), request1);
+
+        //1번유저 생성
+        member1 = Member.builder()
+                .email("coco1@bb.bb")
+                .password("qwerqwer")
+                .role(MemberRoleEnum.USER)
+                .profile(Profile.builder()
+                        .nickname("coco")
+                        .game(GameType.LOL)
+                        .tier(Tier.SILVER)
+                        .profileImage("coco")
+                        .build())
+                .build();
+
+        request2 = RequestMatching.builder()
+                .memberEmail("user@aa.aa")
+                .discordId("RU")
+                .discordNum("2322")
+                .gameMode("ㅈㄱ")
+                .gameName("LOL")
+                .memberNumbers("2")
+                .build();
+        redisService.machedEnterByRedis(request2.getKey(), request2);
+
+        //2번유저 생성
+        member2 = Member.builder()
+                .email("coco2@bb.bb")
+                .password("qwerqwer")
+                .role(MemberRoleEnum.USER)
+                .profile(Profile.builder()
+                        .nickname("coco2")
+                        .game(GameType.LOL)
+                        .tier(Tier.SILVER)
+                        .profileImage("coco2")
+                        .build())
+                .build();
+
+        resultMatching = ResultMatching.builder()
+                .discordUrl("ww.aa.aa")
+                .gameInfo(request1.getKey())
+                .playMode(request1.getGameMode())
+                .build();
+
+
+        MatchingLog matchingLog1 = new MatchingLog(resultMatching,member1);
+        MatchingLog matchingLog2 = new MatchingLog(resultMatching,member2);
+    }
+
+    @Test
+    void testMatchingJoin() throws JsonProcessingException {
+        var matchingQuota = Long.valueOf(request2.getMemberNumber());
+        // Redis에서 나온 응답값과 비교할 List 생성
+        List<RequestMatching> requests = Arrays.asList(request1, request2);
+        //레디스에 현재 담겨있는 인원 수 검증
+        Long result = redisService.waitingUserCountAndRedisConnectByRedis(request1.getKey());
+
+        List<RequestMatching> requestMatchings = redisService.getMatchingMemberByRedis(request1.getKey(), matchingQuota, RequestMatching.class);
+
+        // Redis에서 요청한 멤버와 매칭할 멤버들을 비교 검증
+        Assertions.assertEquals(2L,result);
+        Assertions.assertEquals(requests,requestMatchings);
+
+
+    }
 
 
 }

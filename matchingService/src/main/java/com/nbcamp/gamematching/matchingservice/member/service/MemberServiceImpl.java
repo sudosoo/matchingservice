@@ -40,7 +40,6 @@ public class MemberServiceImpl implements MemberService {
     private final MatchingLogRepository matchingLogRepository;
     private final BoardService boardService;
     private final FileUploadService fileUploadService;
-    private final ResultMatchingRepository resultMatchingRepository;
 
     @Value("${admin.password}")
     private String admin;

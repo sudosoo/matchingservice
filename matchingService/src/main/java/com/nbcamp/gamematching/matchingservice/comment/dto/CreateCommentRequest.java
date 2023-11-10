@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateCommentRequest {
-
     @Column(nullable = false)
     private String content;
 

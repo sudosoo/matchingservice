@@ -15,9 +15,8 @@ import java.util.Optional;
 
 public interface MatchingService {
 
-    ResponseUrlInfo matchingJoin(RequestMatching requestMatching,
-                                 HttpServletRequest servletRequest) throws JsonProcessingException;
-    Optional<List<MatchingResultQueryDto>> findByMatchingResultMemberNicknameByMemberId(Long id);
+    ResponseUrlInfo matchingJoin(RequestMatching requestMatching) throws JsonProcessingException;
+    List<MatchingResultQueryDto> findByMatchingResultMemberNicknameByMemberId(Long memberId);
     List<NicknameDto> findMatchingMembers(Long matchingId, Long memberId);
     ResultMatching findResultMatchingById(Long matchingId);
 }

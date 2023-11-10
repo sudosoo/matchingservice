@@ -13,7 +13,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -21,15 +22,16 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 @RequiredArgsConstructor
 public class RedisService {
-
     private final StringRedisTemplate stringRedisTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
     public static ObjectMapper objectMapper = new ObjectMapper();
+
 
     public void machedEnterByRedis(String key, RequestMatching member) throws JsonProcessingException {
         var mappperv = objectMapper.writeValueAsString(member);
         redisTemplate.opsForList().leftPush(key, mappperv);
     }
+
 
     public Long waitingUserCountAndRedisConnectByRedis(String key) {
         if(redisTemplate.isExposeConnection()){
@@ -44,18 +46,18 @@ public class RedisService {
         return mapper.readValue((String) json.get(0), count);
     }
 
-    public List<RequestMatching> getMatchingMemberByRedis(String key, Long matchingQuota, Class<RequestMatching> count) {
+    public List<RequestMatching> getMatchingMemberByRedis(String key, Long matchingQuota, Class<RequestMatching> className) {
         ObjectMapper mapper = new ObjectMapper();
-        List<RequestMatching> resualtlist = new ArrayList<>();
+        List<RequestMatching> resualtList = new ArrayList<>();
         try {
             List<Object> jsonList = redisTemplate.opsForList().rightPop(key, matchingQuota);
             for (int i = 0; i < jsonList.size(); i++) {
-                resualtlist.add(mapper.readValue((String) jsonList.get(i), count));
+                resualtList.add(mapper.readValue((String) jsonList.get(i), className));
             }
         } catch (Exception e) {
             throw new NotFoundException.NotFoundMemberException();
         }
-        return resualtlist;
+        return resualtList;
     }
 
     public void matchingCancelByRedis(RequestMatching member) {

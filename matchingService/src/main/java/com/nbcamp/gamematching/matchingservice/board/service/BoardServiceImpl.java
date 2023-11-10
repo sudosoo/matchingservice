@@ -1,17 +1,14 @@
 package com.nbcamp.gamematching.matchingservice.board.service;
 
 import com.nbcamp.gamematching.matchingservice.board.dto.BoardAdminDto;
+import com.nbcamp.gamematching.matchingservice.board.dto.BoardRequest;
 import com.nbcamp.gamematching.matchingservice.board.dto.BoardResponse;
-import com.nbcamp.gamematching.matchingservice.board.dto.CreateBoardRequest;
-import com.nbcamp.gamematching.matchingservice.board.dto.UpdateBoardRequest;
 import com.nbcamp.gamematching.matchingservice.board.entity.Board;
 import com.nbcamp.gamematching.matchingservice.board.repository.BoardRepository;
-import com.nbcamp.gamematching.matchingservice.comment.repository.CommentRepository;
 import com.nbcamp.gamematching.matchingservice.common.domain.CreatePageable;
 import com.nbcamp.gamematching.matchingservice.exception.NotFoundException;
 import com.nbcamp.gamematching.matchingservice.like.repository.LikeRepository;
 import com.nbcamp.gamematching.matchingservice.member.domain.FileDetail;
-import com.nbcamp.gamematching.matchingservice.member.entity.Member;
 import com.nbcamp.gamematching.matchingservice.member.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +24,26 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BoardServiceImpl implements BoardService{
+public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
     private final FileUploadService fileUploadService;
 
     //게시글 작성
-    public void createBoard(CreateBoardRequest createBoardRequest, Member member,
-            MultipartFile image) {
+    public void createBoard(BoardRequest boardRequest) {
 
         //이미지파일이 없을 때 기본이미지 넣기
-        if(image == null) {
+        if (boardRequest.getImage() == null) {
             String boardImage = "images/nav/logo.png";
             Board board = new Board(boardImage,
-                    createBoardRequest.getContent(), member);
+                    boardRequest);
             boardRepository.save(board);
 
         } else {
-            FileDetail fileDetail = fileUploadService.save(image);
+            FileDetail fileDetail = fileUploadService.save(boardRequest.getImage());
             Board board = new Board(fileDetail.getPath(),
-                    createBoardRequest.getContent(), member);
+                    boardRequest);
             boardRepository.save(board);
             System.out.println(fileDetail.getPath());
         }
@@ -60,33 +55,32 @@ public class BoardServiceImpl implements BoardService{
         List<BoardResponse> boardResponseList = new ArrayList<>();
         for (Board board : boardPage) {
             Long likeCount = likeRepository.countByBoardId(board.getId());
-            boardResponseList.add(new BoardResponse(board,likeCount));
+            boardResponseList.add(new BoardResponse(board, likeCount));
         }
         return boardResponseList;
     }
 
     //게시글 수정
-    public void updateBoard(Long boardId, UpdateBoardRequest boardRequest, Member member,
-            MultipartFile image) {
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
-        board.checkUser(board, member);
-        if(image == null) {
+    public void updateBoard(BoardRequest boardRequest) {
+        Board board = boardRepository.findById(boardRequest.getId()).orElseThrow(NotFoundException::new);
+        board.checkUser(board, boardRequest.getMember());
+        if (boardRequest.getImage() == null) {
             String boardImage = "images/nav/logo.png";
-            board.updateBoard(boardRequest, boardImage, member);
+            board.updateBoard(boardRequest, boardImage);
             boardRepository.save(board);
         } else {
-            FileDetail fileDetail = fileUploadService.save(image);
-            board.updateBoard(boardRequest, fileDetail.getPath(), member);
+            FileDetail fileDetail = fileUploadService.save(boardRequest.getImage());
+            board.updateBoard(boardRequest, fileDetail.getPath());
             boardRepository.save(board);
         }
     }
 
     //게시글 삭제
-    public void deleteBoard(Long boardId, Member member) {
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
-        board.checkUser(board, member);
-        likeRepository.deleteAllByBoardId(boardId);
-        boardRepository.deleteById(boardId);
+    public void deleteBoard(BoardRequest boardRequest) {
+        Board board = boardRepository.findById(boardRequest.getId()).orElseThrow(NotFoundException::new);
+        board.checkUser(board, boardRequest.getMember());
+        likeRepository.deleteAllByBoardId(board.getId());
+        boardRepository.deleteById(board.getId());
     }
 
     //페이징
