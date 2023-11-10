@@ -1,14 +1,12 @@
 package com.nbcamp.gamematching.matchingservice.matching.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nbcamp.gamematching.matchingservice.matching.service.MatchingService;
 import com.nbcamp.gamematching.matchingservice.matching.dto.NicknameDto;
 import com.nbcamp.gamematching.matchingservice.matching.dto.QueryDto.MatchingResultQueryDto;
 import com.nbcamp.gamematching.matchingservice.matching.dto.RequestMatching;
 import com.nbcamp.gamematching.matchingservice.matching.dto.ResponseUrlInfo;
-import com.nbcamp.gamematching.matchingservice.member.entity.Member;
+import com.nbcamp.gamematching.matchingservice.matching.service.MatchingService;
 import com.nbcamp.gamematching.matchingservice.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/matching")
@@ -40,9 +37,8 @@ public class MatchingController {
     public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody final RequestMatching requestMatching,
                                                        @AuthenticationPrincipal final UserDetailsImpl userDetails)
             throws JsonProcessingException {
-
         var member = userDetails.getMember();
-        var matchingMember = new RequestMatching(requestMatching, member.getEmail());
+        var matchingMember = new RequestMatching(requestMatching,member.getEmail());
         log.info("Join Matching Useremail{} UserDiscordId{}", member.getEmail(), requestMatching.getDiscordId());
         var urlInfo = matchingService.matchingJoin(matchingMember);
         return ResponseEntity.ok(urlInfo);
