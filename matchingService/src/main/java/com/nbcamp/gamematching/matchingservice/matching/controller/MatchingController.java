@@ -38,22 +38,21 @@ public class MatchingController {
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<ResponseUrlInfo> joinRequest(@RequestBody final RequestMatching requestMatching,
-                                                       @AuthenticationPrincipal final UserDetailsImpl userDetails,
-                                                       final HttpServletRequest servletRequest)
+                                                       @AuthenticationPrincipal final UserDetailsImpl userDetails)
             throws JsonProcessingException {
 
         var member = userDetails.getMember();
         var matchingMember = new RequestMatching(requestMatching, member.getEmail());
         log.info("Join Matching Useremail{} UserDiscordId{}", member.getEmail(), requestMatching.getDiscordId());
-        var urlInfo = matchingService.matchingJoin(matchingMember, servletRequest);
+        var urlInfo = matchingService.matchingJoin(matchingMember);
         return ResponseEntity.ok(urlInfo);
     }
 
     @GetMapping("/findmember")
     @ResponseBody
     @Transactional(readOnly = true)
-    public ResponseEntity<List<MatchingResultQueryDto>> findByResultMatchingAndMember(@RequestParam final Long id) {
-        return ResponseEntity.ok(matchingService.findByMatchingResultMemberNicknameByMemberId(id));
+    public ResponseEntity<List<MatchingResultQueryDto>> findByResultMatchingAndMember(@AuthenticationPrincipal final UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(matchingService.findByMatchingResultMemberNicknameByMemberId(userDetails.getMember().getId()));
     }
 
     @GetMapping("/{matchingId}/members")

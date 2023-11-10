@@ -1,8 +1,8 @@
 package com.nbcamp.gamematching.matchingservice.config;
 
 
-import com.nbcamp.gamematching.matchingservice.jwt.JwtAuthFilter;
 import com.nbcamp.gamematching.matchingservice.jwt.JwtUtil;
+import com.nbcamp.gamematching.matchingservice.security.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +57,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/GGMatching/**","/matchingpub/**","/matchingsub/**").permitAll()
                 .requestMatchers("/GGTalk/**").permitAll()
                 .requestMatchers("/pub/**").permitAll()
-                .requestMatchers("/sub/**").permitAll()//테스트용
+                .requestMatchers("/sub/**").permitAll()
                 .requestMatchers("js/**", "css/**", "images/**", "files/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil),

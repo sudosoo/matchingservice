@@ -4,7 +4,6 @@ package com.nbcamp.gamematching.matchingservice.advice;
 import com.nbcamp.gamematching.matchingservice.exception.*;
 import com.nbcamp.gamematching.matchingservice.exception.api.RestApiException;
 import com.nbcamp.gamematching.matchingservice.exception.api.Status;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@Log4j2
 @RestControllerAdvice
 public class ExceptionAdvice {
 

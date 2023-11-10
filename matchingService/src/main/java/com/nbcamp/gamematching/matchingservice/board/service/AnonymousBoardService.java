@@ -3,10 +3,7 @@ package com.nbcamp.gamematching.matchingservice.board.service;
 import com.nbcamp.gamematching.matchingservice.board.dto.AnonymousBoardAdminDto;
 import com.nbcamp.gamematching.matchingservice.board.dto.AnonymousBoardResponse;
 import com.nbcamp.gamematching.matchingservice.board.dto.BoardRequest;
-import com.nbcamp.gamematching.matchingservice.board.dto.UpdateBoardRequest;
 import com.nbcamp.gamematching.matchingservice.board.entity.AnonymousBoard;
-import com.nbcamp.gamematching.matchingservice.member.entity.Member;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

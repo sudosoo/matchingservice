@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MatchingQueryRepository{
-    List<MatchingResultQueryDto> findByMatchingResultMemberNicknameByMemberId(Long memberId);
+    List<MatchingResultQueryDto> findByMatchingResultByMemberId(Long memberId);
 
 }
